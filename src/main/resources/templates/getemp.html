@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<form action="updateemp" method="post">
+		<input type="hidden" th:value=${emp.empno} name="no" >
+		<input type="text" th:value="${emp.ename}" name="name" /> <br>
+		<input type="text" th:value="${emp.job}" name="job" /> <br>
+		<input type="date" th:value="${emp.hiredate}" name="hiredate" /> <br>
+		<input type="number" th:value="${emp.sal}" name="sal" /> <br>
+		<input type="number" th:value="${emp.comm}" name="comm" /> <br>
+		<input type="submit"  value="送出"/>
+</form>
+	<a href="home"><button>回首頁</button></a>
+		
+	
+</body>
+</html>

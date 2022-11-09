@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table border="1" width=600px>
+		<thead>
+			<tr>
+			<th>empno</th>
+			<th>ename</th>
+			<th>job</th>
+			<th>hiredate</th>
+			<th>sal</th>
+			<th>comm</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr th:each=emp:${empList}>
+		<td th:text="${emp.empno}"></td>
+		<td th:text="${emp.ename}"></td>
+		<td th:text="${emp.job}"></td>
+		<td th:text="${emp.hiredate}"></td>
+		<td th:text="${emp.sal}"></td>
+		<td th:text="${emp.comm}"></td>
+		</tr>
+		</tbody>
+	</table>
+	
+	<form th:action="@{/inquire}" method="post">
+		<input  type="number" name="no" /> <input type="submit" />
+	</form>
+	<a href="guide"><button>新增資料</button></a>
+	<a href="home"><button>回首頁</button></a>
+</body>
+</html>

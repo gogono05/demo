@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form th:action="@{/addemp}" method="post">
+		<p>請輸入姓名</p><input type="text" name="name" /> 
+		<p>請輸入職位</p><input type="text" name="job" /> 
+		<p>請輸入日期</p><input type="date" name="hiredate" /> 
+		<p>請輸入薪資</p><input type="number" name="sal" /> 
+		<p>請輸入加給</p><input type="number" name="comm" /> 
+		<input type="submit"  value="送出"/>
+</form>
+<a href="home"><button>回首頁</button></a>
+</body>
+</html>
