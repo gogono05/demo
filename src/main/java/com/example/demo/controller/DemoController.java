@@ -49,7 +49,10 @@ public class DemoController {
 
 	// 新增一筆新的emp資料
 	@PostMapping("/emps")
-	public ResponseEntity<?> addEmp(Emp2 emp) {
+	public ResponseEntity<?> addEmp(@RequestBody Emp2 emp) {
+		if(check(emp)) {
+			return ResponseEntity.badRequest().build();
+		}
 		try {
 			emp2Service.addEmp(emp);
 		} catch (DataAccessException e) {
@@ -61,6 +64,9 @@ public class DemoController {
 	// 修改某筆emp資料
 	@PutMapping("/emps")
 	public ResponseEntity<?> updateEmp(@RequestBody Emp2 emp) {
+		if(emp.getEmpno()==null||check(emp)) {
+			return ResponseEntity.notFound().build();
+		}
 		try {
 			emp2Service.updateEmp(emp);
 		} catch (DataAccessException e) {
@@ -70,7 +76,7 @@ public class DemoController {
 	}
 
 	// 查詢資料從sal
-	@GetMapping("/emp/sal/{sal}")
+	@GetMapping("/emps/sal/{sal}")
 	public ResponseEntity<List<Emp2>> getEmpBySal(@PathVariable(name = "sal") String sal) {
 		// return emp2Service.getAll().stream().filter(emp1 -> emp1.getSal() >=
 		// sal).collect(Collectors.toList());
@@ -84,13 +90,16 @@ public class DemoController {
 	}
 
 	// 查詢資料從date
-	@GetMapping("/emp/date/{dateStr}/{dateEnd}")
+	@GetMapping("/emps/date/{dateStr}/{dateEnd}")
 	public ResponseEntity<List<Emp2>> getEmp(@PathVariable String dateStr, @PathVariable String dateEnd) {
+		if(!(dateStr.length()+dateEnd.length()==20)) {
+			return ResponseEntity.badRequest().build();
+		}
 		try {
 			LocalDate localdateStr = LocalDate.parse(dateStr);
 			LocalDate localdateEnd = LocalDate.parse(dateEnd);
 			if (!localdateStr.isBefore(localdateEnd)) {
-				return ResponseEntity.badRequest().build();
+				return ResponseEntity.notFound().build();
 			}
 			return ResponseEntity.ok().body(emp2Service.getByDate(localdateStr, localdateEnd));
 		} catch (DateTimeParseException e) {
@@ -98,5 +107,11 @@ public class DemoController {
 		}
 
 	}
+	public boolean check(Emp2 emp){
+		if(emp.getJob().length()>9 || emp.getEname().length()>10) 
+		return false;
+		return true;
+	}
+	
 
 }
