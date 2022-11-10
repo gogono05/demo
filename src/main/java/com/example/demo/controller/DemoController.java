@@ -1,11 +1,12 @@
 package com.example.demo.controller;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,62 +36,67 @@ public class DemoController {
 	// 查詢某筆資料
 	@GetMapping("/emps/{id}")
 	public ResponseEntity<Emp2> getEmp(@PathVariable("id") String empno) {
-		Emp2 emp = null;
 		try {
-			emp = emp2Service.getByEmpno(Integer.valueOf(empno));
+			Emp2 emp = emp2Service.getByEmpno(Integer.valueOf(empno));
 			if (emp == null) {
 				return ResponseEntity.notFound().build();
 			}
+			return ResponseEntity.ok().body(emp);
 		} catch (NumberFormatException e) {
 			return ResponseEntity.badRequest().build();
 		}
-
-		return ResponseEntity.ok().body(emp);
 	}
 
 	// 新增一筆新的emp資料
 	@PostMapping("/emps")
-	public ResponseEntity<?> addEmp(@RequestBody Emp2 emp) {
-		emp2Service.addEmp(emp);
+	public ResponseEntity<?> addEmp(Emp2 emp) {
+		try {
+			emp2Service.addEmp(emp);
+		} catch (DataAccessException e) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+		}
 		return ResponseEntity.ok().build();
 	}
 
 	// 修改某筆emp資料
 	@PutMapping("/emps")
 	public ResponseEntity<?> updateEmp(@RequestBody Emp2 emp) {
-		emp2Service.updateEmp(emp);
+		try {
+			emp2Service.updateEmp(emp);
+		} catch (DataAccessException e) {
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+		}
 		return ResponseEntity.ok().build();
 	}
 
 	// 查詢資料從sal
 	@GetMapping("/emp/sal/{sal}")
 	public ResponseEntity<List<Emp2>> getEmpBySal(@PathVariable(name = "sal") String sal) {
-		//return emp2Service.getAll().stream().filter(emp1 -> emp1.getSal() >= sal).collect(Collectors.toList());
-		Double salDouble = null;
+		// return emp2Service.getAll().stream().filter(emp1 -> emp1.getSal() >=
+		// sal).collect(Collectors.toList());
 		try {
-			 salDouble= Double.valueOf(sal);
+			Double salDouble = Double.valueOf(sal);
+			return ResponseEntity.ok().body(emp2Service.getBySal(salDouble));
 		} catch (NumberFormatException e) {
 			return ResponseEntity.badRequest().build();
 		}
-		return ResponseEntity.ok().body(emp2Service.getBySal(salDouble));
+
 	}
 
 	// 查詢資料從date
 	@GetMapping("/emp/date/{dateStr}/{dateEnd}")
-	public ResponseEntity<List<Emp2>> getEmp(@PathVariable String dateStr, @PathVariable String dateEnd)  {
-		LocalDate localdateStr;
-		LocalDate localdateEnd;
+	public ResponseEntity<List<Emp2>> getEmp(@PathVariable String dateStr, @PathVariable String dateEnd) {
 		try {
-			 localdateStr = LocalDate.parse(dateStr);
-			 localdateEnd = LocalDate.parse(dateEnd);
-			Period period = localdateStr.until(localdateEnd);
-			if(period.getDays()<0) {
+			LocalDate localdateStr = LocalDate.parse(dateStr);
+			LocalDate localdateEnd = LocalDate.parse(dateEnd);
+			if (!localdateStr.isBefore(localdateEnd)) {
 				return ResponseEntity.badRequest().build();
 			}
+			return ResponseEntity.ok().body(emp2Service.getByDate(localdateStr, localdateEnd));
 		} catch (DateTimeParseException e) {
 			return ResponseEntity.badRequest().build();
 		}
-		return ResponseEntity.ok().body(emp2Service.getByDate(localdateStr, localdateEnd));
+
 	}
 
 }
