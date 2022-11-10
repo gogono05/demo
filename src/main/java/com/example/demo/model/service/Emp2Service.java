@@ -1,5 +1,6 @@
 package com.example.demo.model.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,8 @@ public class Emp2Service {
 		return emp2Dao.getAll();
 	}
 
-	public Emp2 getEmpById(int id) {
-		List<Emp2> emplist = emp2Dao.findByID(id);
+	public Emp2 getByEmpno(int no) {
+		List<Emp2> emplist = emp2Dao.findByNo(no);
 		if (emplist.size() < 1) {
 			return null;
 		} else {
@@ -36,5 +37,8 @@ public class Emp2Service {
 
 	public List<Emp2> getBySal(Double sal){
 		return emp2Dao.findBySal(sal);
+	}
+	public List<Emp2> getByDate(LocalDate localdate1, LocalDate localdate2){
+		return emp2Dao.findByDate(localdate1, localdate2);
 	}
 }
